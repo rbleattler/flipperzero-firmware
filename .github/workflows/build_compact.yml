@@ -5,11 +5,14 @@ on:
 
 env:
   FBT_TOOLCHAIN_PATH: /runner/_work
+  FBT_GIT_SUBMODULE_SHALLOW: 1
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   compact:
     runs-on: [self-hosted, FlipperZeroShell]
     strategy:
+      fail-fast: false
       matrix:
         target: [f7, f18]
     steps:
@@ -17,7 +20,7 @@ jobs:
         run: find ./ -mount -maxdepth 1 -exec rm -rf {} \;
 
       - name: 'Checkout code'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
           submodules: false
@@ -44,7 +47,7 @@ jobs:
           echo "hw-target-code=$TARGET" >> $GITHUB_OUTPUT
 
       - name: Deploy uFBT with SDK
-        uses: flipperdevices/flipperzero-ufbt-action@v0.1.0
+        uses: flipperdevices/flipperzero-ufbt-action@v0.1
         with:
           task: setup
           sdk-file: ${{ steps.build-fw.outputs.sdk-file }}
@@ -73,3 +76,12 @@ jobs:
               popd
             done
           done
+
+## Uncomment this for a single job that will run only if all targets are built successfully          
+#  report-status:
+#    name: Report status
+#    needs: [compact]
+#    if: always() && !contains(needs.*.result, 'failure')
+#    runs-on: [self-hosted, FlipperZeroShell]
+#    steps:
+#      - run: echo "All good ✨" ;

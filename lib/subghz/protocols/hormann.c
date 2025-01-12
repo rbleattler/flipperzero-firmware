@@ -6,7 +6,7 @@
 #include "../blocks/generic.h"
 #include "../blocks/math.h"
 
-#define TAG "SubGhzProtocolHormannHSM"
+#define TAG "SubGhzProtocolHormannHsm"
 
 #define HORMANN_HSM_PATTERN 0xFF000000003
 
@@ -285,7 +285,7 @@ void subghz_protocol_decoder_hormann_feed(void* context, bool level, uint32_t du
  * @param instance Pointer to a SubGhzBlockGeneric* instance
  */
 static void subghz_protocol_hormann_check_remote_controller(SubGhzBlockGeneric* instance) {
-    instance->btn = (instance->data >> 4) & 0xF;
+    instance->btn = (instance->data >> 8) & 0xF;
 }
 
 uint8_t subghz_protocol_decoder_hormann_get_hash_data(void* context) {
